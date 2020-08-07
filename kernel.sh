@@ -50,7 +50,7 @@ DEFCONFIG=whyred_defconfig
 
 # Specify compiler. 
 # 'clang' or 'gcc'
-COMPILER=gcc
+COMPILER=clang
 
 # Clean source prior building. 1 is NO(default) | 0 is YES
 INCREMENTAL=1
@@ -60,7 +60,7 @@ PTTG=1
 	if [ $PTTG = 1 ]
 	then
 		# Set Telegram Chat ID
-		CHATID="-1001493260868"
+		CHATID="-1001403511595"
 	fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
@@ -130,7 +130,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	if [ $COMPILER = "clang" ]
 	then
 		msg "|| Cloning Clang-11 ||"
-		git clone --depth=1 https://github.com/Panchajanya1999/azure-clang.git clang-llvm
+		git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang-llvm
 
 		# Toolchain Directory defaults to clang-llvm
 		TC_DIR=$KERNEL_DIR/clang-llvm
@@ -241,8 +241,7 @@ build_kernel() {
 	fi
 
 	msg "|| Started Compilation ||"
-	export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-	make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+	make -j"$PROCS" O=out
 
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
@@ -261,7 +260,7 @@ build_kernel() {
 		else
 			if [ "$PTTG" = 1 ]
  			then
-				tg_post_build "error.log" "$CHATID" "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>"
+				tg_post_msg "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>" "$CHATID"
 			fi
 		fi
 	
