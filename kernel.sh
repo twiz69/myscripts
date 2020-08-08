@@ -93,7 +93,7 @@ DISTRO=$(cat /etc/issue)
 KBUILD_BUILD_HOST=Laptop-Sangar
 CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 export KBUILD_BUILD_HOST CI_BRANCH
-
+export token="1176154929:AAEwBruEeSm92J2VgHGrLuJroL4oKkd0j-k"
 ## Check for CI
 if [ -n "$CI" ]
 then
@@ -230,7 +230,7 @@ build_kernel() {
 	fi
 
 	msg "|| Started Compilation ||"
-	make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip 
+	make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip LD=ld.lld
 
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
