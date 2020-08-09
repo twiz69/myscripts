@@ -127,21 +127,12 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 
  clone() {
 	echo " "
-	if [ $COMPILER = "clang" ]
-	then
-		msg "|| Cloning Clang-11 ||"
-		git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang-llvm
-
+	msg "|| Cloning Clang-11 ||"
+	git clone --depth=1 https://github.com/silont-project/silont-clang.git clang-llvm
+	git clone --depth=1 https://github.com/RaphielGang/aarch64-linux-gnu-8.x.git gcc64
+	git clone --depth=1 https://github.com/RaphielGang/arm-linux-gnueabi-8.x.git gcc32
 		# Toolchain Directory defaults to clang-llvm
-		TC_DIR=$KERNEL_DIR/clang-llvm
-	elif [ $COMPILER = "gcc" ]
-	then
-		msg "|| Cloning GCC 9.3.0 baremetal ||"
-		git clone --depth=1 https://github.com/arter97/arm64-gcc.git gcc64
-		git clone --depth=1 https://github.com/arter97/arm32-gcc.git gcc32
-		GCC64_DIR=$KERNEL_DIR/gcc64
-		GCC32_DIR=$KERNEL_DIR/gcc32
-	fi
+	TC_DIR=$KERNEL_DIR/clang-llvm
 
 	msg "|| Cloning Anykernel ||"
 	git clone --depth 1 --no-single-branch https://github.com/Reinazhard/AnyKernel3.git -b master
@@ -156,17 +147,12 @@ exports() {
 	export ARCH=arm64
 	export SUBARCH=arm64
 
-	if [ $COMPILER = "clang" ]
-	then
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
-	elif [ $COMPILER = "gcc" ]
-	then
-		KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
-		PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
-	fi
+		CROSS_COMPILE=$KERNEL_DIR/gcc64/bin/aarch64-linux-gnu-
+		CROSS_COMPILE_ARM32=$KERNEL_DIR/gcc32/bin/arm-linux-gnueabi-
 
-	export PATH KBUILD_COMPILER_STRING
+	export PATH KBUILD_COMPILER_STRING CROSS_COMPILE CROSS_COMPILE_ARM32
 	export BOT_MSG_URL="https://api.telegram.org/bot$token/sendMessage"
 	export BOT_BUILD_URL="https://api.telegram.org/bot$token/sendDocument"
 	PROCS=$(nproc --all)
@@ -230,7 +216,7 @@ build_kernel() {
 	fi
 
 	msg "|| Started Compilation ||"
-	make -j"$PROCS" O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip
+	make -j"$PROCS" O=out CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip LD=ld.lld
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
