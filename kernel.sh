@@ -129,15 +129,11 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	echo " "
 	msg "|| Cloning Clang-11 ||"
 	git clone --depth=1 https://github.com/silont-project/silont-clang.git clang-llvm
-	git clone --depth=1 https://github.com/RaphielGang/aarch64-linux-gnu-8.x.git gcc64
-	git clone --depth=1 https://github.com/RaphielGang/arm-linux-gnueabi-8.x.git gcc32
 		# Toolchain Directory defaults to clang-llvm
 	TC_DIR=$KERNEL_DIR/clang-llvm
 
 	msg "|| Cloning Anykernel ||"
 	git clone --depth 1 --no-single-branch https://github.com/Reinazhard/AnyKernel3.git -b master
-	msg "|| Cloning libufdt ||"
-	git clone https://android.googlesource.com/platform/system/libufdt "$KERNEL_DIR"/scripts/ufdt/libufdt
 }
 
 ##------------------------------------------------------##
@@ -149,10 +145,9 @@ exports() {
 
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
-		CROSS_COMPILE=$KERNEL_DIR/gcc64/bin/aarch64-linux-gnu-
-		CROSS_COMPILE_ARM32=$KERNEL_DIR/gcc32/bin/arm-linux-gnueabi-
+		
 
-	export PATH KBUILD_COMPILER_STRING CROSS_COMPILE CROSS_COMPILE_ARM32
+	export PATH KBUILD_COMPILER_STRING 
 	export BOT_MSG_URL="https://api.telegram.org/bot$token/sendMessage"
 	export BOT_BUILD_URL="https://api.telegram.org/bot$token/sendDocument"
 	PROCS=$(nproc --all)
@@ -216,7 +211,7 @@ build_kernel() {
 	fi
 
 	msg "|| Started Compilation ||"
-	make -j"$PROCS" O=out CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip LD=ld.lld OBJCOPY=llvm-objcopy
+	make -j"$PROCS" O=out CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip LD=ld.lld OBJCOPY=llvm-objcopy CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi-
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
