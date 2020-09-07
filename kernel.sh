@@ -106,7 +106,6 @@ then
 	if [ -n "$DRONE" ]
 	then
 		export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
-		export KBUILD_BUILD_HOST=$DRONE_SYSTEM_HOST
 		export CI_BRANCH=$DRONE_BRANCH
 	else
 		echo "Not presetting Build Version"
