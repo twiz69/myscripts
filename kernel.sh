@@ -217,7 +217,7 @@ build_kernel() {
 	fi
 
 	msg "|| Started Compilation ||"
-	make -j"$PROCS" O=out CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip OBJCOPY=llvm-objcopy
+	make -j"$PROCS" O=out CC=clang CLANG_TRIPLE=aarch64-linux-gnu-
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
