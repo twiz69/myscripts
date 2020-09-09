@@ -147,7 +147,7 @@ exports() {
 	export ARCH=arm64
 	export SUBARCH=arm64
 	export CROSS_COMPILE=$KERNEL_DIR/gcc/bin/aarch64-linux-gnu-
-	export CROSS_COMPILE_ARM32=$KERNEL_DIR/gcc32/bin/arm-linux-gnueabi-
+	export CROSS_COMPILE_ARM32=$KERNEL_DIR/gcc32/bin/arm-eabi-
 
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
