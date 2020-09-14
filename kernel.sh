@@ -127,7 +127,10 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
  clone() {
 	echo " "
 	msg "|| Cloning Clang-9 ||"
-	git clone --depth=1 https://github.com/silont-project/silont-clang.git clang-llvm
+	git clone --depth=1 https://github.com/RaphielGang/aosp-clang.git clang-llvm
+	msg "|| Cloning GCC ||"
+	git clone --depth=1 https://github.com/najahiiii/aarch64-linux-gnu.git -b linaro8-20190402 gcc
+	git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9.git gcc32
 		# Toolchain Directory defaults to clang-llvm
 	TC_DIR=$KERNEL_DIR/clang-llvm
 
@@ -143,8 +146,8 @@ exports() {
 	export KBUILD_BUILD_USER="reina"
 	export ARCH=arm64
 	export SUBARCH=arm64
-	export CROSS_COMPILE=$TC_DIR/bin/aarch64-linux-gnu-
-	export CROSS_COMPILE_ARM32=$TC_DIR/gcc32/bin/arm-linux-gnueabi-
+	export CROSS_COMPILE=$KERNEL_DIR/gcc/bin/aarch64-linux-gnu-
+	export CROSS_COMPILE_ARM32=$KERNEL_DIR/gcc32/bin/arm-linux-androideabi-
 
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
@@ -214,7 +217,7 @@ build_kernel() {
 	fi
 
 	msg "|| Started Compilation ||"
-	make -j"$PROCS" O=out CC=clang
+	make -j"$PROCS" O=out CC=clang CLANG_TRIPLE=aarch64-linux-gnu-
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
