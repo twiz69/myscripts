@@ -39,14 +39,14 @@ KERNEL_DIR=$PWD
 ZIPNAME="SiLonT-TEST"
 
 # The name of the device for which the kernel is built
-MODEL="Redmi Note 5 Pro"
+MODEL="Mi 8 Lite"
 
 # The codename of the device
-DEVICE="whyred"
+DEVICE="platina"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
-DEFCONFIG=whyred_defconfig
+DEFCONFIG=platina_defconfig
 
 # Specify compiler. 
 # 'clang' or 'gcc'
@@ -135,7 +135,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 		GCC32_DIR=$KERNEL_DIR/gcc32
 
 	msg "|| Cloning Anykernel ||"
-	git clone --depth 1 --no-single-branch https://github.com/Reinazhard/AnyKernel3.git -b master
+	git clone --depth 1 --no-single-branch https://github.com/Reinazhard/AnyKernel3.git -b platina
 }
 
 ##------------------------------------------------------##
