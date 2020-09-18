@@ -142,6 +142,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 
 exports() {
 	export KBUILD_BUILD_USER="reina"
+	export KBUILD_COMPILER_STRING="GCC 10.2 LTO"
 	export ARCH=arm64
 	export SUBARCH=arm64
 
