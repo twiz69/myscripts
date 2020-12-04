@@ -93,7 +93,6 @@ DISTRO=$(cat /etc/issue)
 KBUILD_BUILD_HOST=Laptop-Sangar
 CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 export KBUILD_BUILD_HOST CI_BRANCH
-export token="1176154929:AAEwBruEeSm92J2VgHGrLuJroL4oKkd0j-k"
 ## Check for CI
 if [ -n "$CI" ]
 then
@@ -127,7 +126,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
  clone() {
 	echo " "
 	msg "|| Cloning Clang-11 ||"
-	git clone --depth=1 https://github.com/silont-project/silont-clang.git clang-llvm
+	git clone --depth=1 https://github.com/silont-project/silont-clang.git clang-llvm --no-tags
 		# Toolchain Directory defaults to clang-llvm
 	TC_DIR=$KERNEL_DIR/clang-llvm
 
