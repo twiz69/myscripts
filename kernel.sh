@@ -50,7 +50,7 @@ DEFCONFIG=lavender_defconfig
 
 # Specify compiler. 
 # 'clang' or 'gcc'
-COMPILER=gcc
+COMPILER=clang
 
 # Clean source prior building. 1 is NO(default) | 0 is YES
 INCREMENTAL=1
@@ -94,7 +94,6 @@ KBUILD_BUILD_HOST=Laptop-Sangar
 CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 token=$TELEGRAM_TOKEN
 export KBUILD_BUILD_HOST CI_BRANCH
-
 ## Check for CI
 if [ -n "$CI" ]
 then
@@ -107,7 +106,6 @@ then
 	if [ -n "$DRONE" ]
 	then
 		export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
-		export KBUILD_BUILD_HOST=Laptop-Sangar
 		export CI_BRANCH=$DRONE_BRANCH
 	else
 		echo "Not presetting Build Version"
@@ -128,11 +126,10 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 
  clone() {
 	echo " "
-		msg "|| Cloning GCC 9.3.0 baremetal ||"
-		git clone --depth=1 https://github.com/arter97/arm64-gcc.git gcc64
-		git clone --depth=1 https://github.com/arter97/arm32-gcc.git gcc32
-		GCC64_DIR=$KERNEL_DIR/gcc64
-		GCC32_DIR=$KERNEL_DIR/gcc32
+	msg "|| Cloning Clang-11 ||"
+	git clone --depth=1 https://github.com/silont-project/silont-clang.git clang-llvm
+		# Toolchain Directory defaults to clang-llvm
+	TC_DIR=$KERNEL_DIR/clang-llvm
 
 	msg "|| Cloning Anykernel ||"
 	git clone --depth 1 --no-single-branch https://github.com/Reinazhard/AnyKernel3.git -b lave
@@ -142,14 +139,14 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 
 exports() {
 	export KBUILD_BUILD_USER="reina"
-	export KBUILD_COMPILER_STRING="GCC 10.2 LTO"
 	export ARCH=arm64
 	export SUBARCH=arm64
 
-	KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
-	PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
+		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+		PATH=$TC_DIR/bin/:$PATH
+		
 
-	export PATH KBUILD_COMPILER_STRING
+	export PATH KBUILD_COMPILER_STRING 
 	export BOT_MSG_URL="https://api.telegram.org/bot$token/sendMessage"
 	export BOT_BUILD_URL="https://api.telegram.org/bot$token/sendDocument"
 	PROCS=$(nproc --all)
@@ -159,7 +156,7 @@ exports() {
 ##---------------------------------------------------------##
 
 tg_post_msg() {
-	curl -s -X POST "$BOT_MSG_URL" -d chat_id="-1001403511595" \
+	curl -s -X POST "$BOT_MSG_URL" -d chat_id="$2" \
 	-d "disable_web_page_preview=true" \
 	-d "parse_mode=html" \
 	-d text="$1"
@@ -177,7 +174,7 @@ tg_post_build() {
 	-F chat_id="$2"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
-	-F caption="$3 | <code>Build Number : </code><b>$DRONE_BUILD_NUMBER</b>"  
+	-F caption="$3 | <b>MD5 Checksum : </b><code>$MD5CHECK</code>"  
 }
 
 ##----------------------------------------------------------##
@@ -206,17 +203,6 @@ build_kernel() {
 
 	BUILD_START=$(date +"%s")
 	
-	if [ $COMPILER = "clang" ]
-	then
-		MAKE+=(
-			CROSS_COMPILE=aarch64-linux-gnu- \
-			CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-			CC=clang \
-			AR=llvm-ar \
-			OBJDUMP=llvm-objdump \
-			STRIP=llvm-strip
-		)
-	fi
 	
 	if [ $SILENCE = "1" ]
 	then
@@ -224,9 +210,7 @@ build_kernel() {
 	fi
 
 	msg "|| Started Compilation ||"
-	export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-	make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
-
+	make -j"$PROCS" O=out CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip OBJCOPY=llvm-objcopy CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi-
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
