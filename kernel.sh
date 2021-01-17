@@ -125,10 +125,16 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 
  clone() {
 	echo " "
-	msg "|| Cloning Clang-11 ||"
-	git clone --depth=1 https://github.com/silont-project/silont-clang.git clang-llvm --no-tags
+	msg "|| Cloning Clang ||"
+	git clone --depth=1 https://github.com/Reinazhard/aosp-clang.git clang-llvm --no-tags
+	msg "|| Cloning ARM64 GCC ||"
+	git clone --depth=1 https://github.com/theradcolor/aarch64-linux-gnu.git -b stable-gcc gcc64 --no-tags --single-branch
+	msg "|| Cloning ARM GCC ||"
+	git clone --depth=1 https://github.com/theradcolor/arm-linux-gnueabi.git -b stable-gcc gcc32 --no-tags --single-branch
 		# Toolchain Directory defaults to clang-llvm
 	TC_DIR=$KERNEL_DIR/clang-llvm
+	GCC64_DIR=$KERNEL_DIR/gcc64
+	GCC32_DIR=$KERNEL_DIR/gcc32
 
 	msg "|| Cloning Anykernel ||"
 	git clone --depth 1 --no-single-branch https://github.com/Reinazhard/AnyKernel3.git -b master
@@ -144,6 +150,8 @@ exports() {
 
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
+		export CROSS_COMPILE=$GCC64_DIR/bin/aarch64-linux-gnu-
+		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-gnueabi-
 		
 
 	export PATH KBUILD_COMPILER_STRING 
@@ -210,7 +218,7 @@ build_kernel() {
 	fi
 
 	msg "|| Started Compilation ||"
-	make -j"$PROCS" O=out CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip OBJCOPY=llvm-objcopy CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+	make -j"$PROCS" O=out CC=clang AR=llvm-ar OBJDUMP=llvm-objdump STRIP=llvm-strip OBJCOPY=llvm-objcopy CLANG_TRIPLE=aarch64-linux-gnu-
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
@@ -253,6 +261,7 @@ gen_zip() {
 		tg_post_build "$ZIP_FINAL" "$CHATID" "✅ Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
 	fi
 	cd ..
+	rm -rf AnyKernel3
 }
 
 clone
