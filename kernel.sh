@@ -126,7 +126,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
  clone() {
 	echo " "
 	msg "|| Cloning Clang ||"
-	git clone --depth=1 https://github.com/Reinazhard/aosp-clang.git clang-llvm --no-tags
+	git clone --depth=1 https://github.com/Reinazhard/aosp-clang.git clang-llvm --no-tags --single-branch
 	msg "|| Cloning ARM64 GCC ||"
 	git clone --depth=1 https://github.com/theradcolor/aarch64-linux-gnu.git -b stable-gcc gcc64 --no-tags --single-branch
 	msg "|| Cloning ARM GCC ||"
@@ -150,6 +150,7 @@ exports() {
 
 		KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 		PATH=$TC_DIR/bin/:$PATH
+		export LD_LIBRARY_PATH=$TC_DIR/lib64:$LD_LIBRARY_PATH
 		export CROSS_COMPILE=$GCC64_DIR/bin/aarch64-linux-gnu-
 		export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-linux-gnueabi-
 		
