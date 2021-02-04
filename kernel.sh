@@ -129,8 +129,8 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
  clone() {
 	echo " "
 		msg "|| Cloning GCC 9.3.0 baremetal ||"
-		git clone --depth=1 https://github.com/arter97/arm64-gcc.git gcc64
-		git clone --depth=1 https://github.com/arter97/arm32-gcc.git gcc32
+		git clone --depth=1 https://github.com/mvaisakh/gcc-arm64.git -b lld-integration gcc64
+		git clone --depth=1 https://github.com/mvaisakh/gcc-arm.git -b lld-integration gcc32
 		GCC64_DIR=$KERNEL_DIR/gcc64
 		GCC32_DIR=$KERNEL_DIR/gcc32
 
@@ -142,7 +142,6 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 
 exports() {
 	export KBUILD_BUILD_USER="reina"
-	export KBUILD_COMPILER_STRING="GCC 10.2 LTO"
 	export ARCH=arm64
 	export SUBARCH=arm64
 
@@ -225,7 +224,7 @@ build_kernel() {
 
 	msg "|| Started Compilation ||"
 	export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
-	make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+	make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf- LD=ld.lld
 
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
