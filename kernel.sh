@@ -39,14 +39,14 @@ KERNEL_DIR=$PWD
 ZIPNAME="JFla-Karamel"
 
 # The name of the device for which the kernel is built
-MODEL="Redmi Note 9"
+MODEL="Redmi 9"
 
 # The codename of the device
-DEVICE="merlin"
+DEVICE="lancelot"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
-DEFCONFIG=merlin_defconfig
+DEFCONFIG=lancelot_defconfig
 
 # Specify compiler. 
 # 'clang' or 'gcc'
@@ -132,7 +132,7 @@ COMMIT_HEAD=$(git log --oneline -1)
 		GCC32_DIR=$KERNEL_DIR/gcc32
 
 	msg "|| Cloning Anykernel ||"
-	git clone --depth 1 --no-single-branch https://github.com/nadinsyllaa/AnyKernel3 -b master
+	git clone --depth 1 --no-single-branch https://github.com/nadinsyllaa/AnyKernel3 -b lancelot
 }
 
 ##------------------------------------------------------##
