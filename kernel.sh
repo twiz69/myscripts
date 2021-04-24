@@ -36,7 +36,7 @@ err() {
 KERNEL_DIR=$PWD
 
 # The name of the Kernel, to name the ZIP
-ZIPNAME="JFla-Karamel"
+ZIPNAME="Bang-Kernel"
 
 # The name of the device for which the kernel is built
 MODEL="Redmi Note 9"
@@ -56,11 +56,11 @@ COMPILER=gcc
 INCREMENTAL=1
 
 # Push ZIP to Telegram. 1 is YES | 0 is NO(default)
-PTTG=1
+PTTG=0
 	if [ $PTTG = 1 ]
 	then
 		# Set Telegram Chat ID
-		CHATID="-1001311643504"
+		CHATID=""
 	fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
@@ -90,7 +90,7 @@ LOG_DEBUG=0
 
 ## Set defaults first
 DISTRO=$(cat /etc/issue)
-KBUILD_BUILD_HOST=Laptop-Nadins
+KBUILD_BUILD_HOST=Server-Gayming-Ni-Boss
 CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 token=$TELEGRAM_TOKEN
 export KBUILD_BUILD_HOST CI_BRANCH
@@ -132,13 +132,13 @@ COMMIT_HEAD=$(git log --oneline -1)
 		GCC32_DIR=$KERNEL_DIR/gcc32
 
 	msg "|| Cloning Anykernel ||"
-	git clone --depth 1 --no-single-branch https://github.com/nadinsyllaa/AnyKernel3 -b master
+	git clone --depth 1 --no-single-branch https://github.com/rnxyr/AnyKernel3.git -b master
 }
 
 ##------------------------------------------------------##
 
 exports() {
-	export KBUILD_BUILD_USER="nadinsylaa"
+	export KBUILD_BUILD_USER="rnxyr"
 	export ARCH=arm64
 	export SUBARCH=arm64
 
@@ -155,7 +155,7 @@ exports() {
 ##---------------------------------------------------------##
 
 tg_post_msg() {
-	curl -s -X POST "$BOT_MSG_URL" -d chat_id="-1001311643504" \
+	curl -s -X POST "$BOT_MSG_URL" -d chat_id="" \
 	-d "disable_web_page_preview=true" \
 	-d "parse_mode=html" \
 	-d text="$1"
