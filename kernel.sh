@@ -36,31 +36,31 @@ err() {
 KERNEL_DIR=$PWD
 
 # The name of the Kernel, to name the ZIP
-ZIPNAME="SiLonT-TEST"
+ZIPNAME="Bang-Kernel"
 
 # The name of the device for which the kernel is built
-MODEL="Redmi Note 5 Pro"
+MODEL="Redmi Note 9"
 
 # The codename of the device
-DEVICE="whyred"
+DEVICE="merlin"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
-DEFCONFIG=whyred_defconfig
+DEFCONFIG=merlin_defconfig
 
 # Specify compiler. 
 # 'clang' or 'gcc'
 COMPILER=clang
 
 # Clean source prior building. 1 is NO(default) | 0 is YES
-INCREMENTAL=1
+INCREMENTAL=0
 
 # Push ZIP to Telegram. 1 is YES | 0 is NO(default)
-PTTG=1
+PTTG=0
 	if [ $PTTG = 1 ]
 	then
 		# Set Telegram Chat ID
-		CHATID="-1001403511595"
+		CHATID=""
 	fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
@@ -90,7 +90,7 @@ LOG_DEBUG=0
 
 ## Set defaults first
 DISTRO=$(cat /etc/issue)
-KBUILD_BUILD_HOST=Laptop-Sangar
+KBUILD_BUILD_HOST=Serber-Gayming-Ni-Boss
 CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 export KBUILD_BUILD_HOST CI_BRANCH
 ## Check for CI
@@ -137,13 +137,13 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 	GCC32_DIR=$KERNEL_DIR/gcc32
 
 	msg "|| Cloning Anykernel ||"
-	git clone --depth 1 --no-single-branch https://github.com/Reinazhard/AnyKernel3.git -b master
+	git clone --depth 1 --no-single-branch https://github.com/rnxyr/AnyKernel3.git -b master
 }
 
 ##------------------------------------------------------##
 
 exports() {
-	export KBUILD_BUILD_USER="reina"
+	export KBUILD_BUILD_USER="rnxyr"
 	export ARCH=arm64
 	export SUBARCH=arm64
 	export token=$TELEGRAM_TOKEN
