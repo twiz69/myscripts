@@ -36,7 +36,7 @@ err() {
 KERNEL_DIR=$PWD
 
 # The name of the Kernel, to name the ZIP
-ZIPNAME="Bang-Kernel"
+ZIPNAME="Elemental-Project-Alpha"
 
 # The name of the device for which the kernel is built
 MODEL="Redmi Note 9"
@@ -60,7 +60,7 @@ PTTG=0
 	if [ $PTTG = 1 ]
 	then
 		# Set Telegram Chat ID
-		CHATID=""
+		CHATID="-100555506396"
 	fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
